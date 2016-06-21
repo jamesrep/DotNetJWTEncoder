@@ -70,18 +70,18 @@ namespace DotNetJWTEncoder
         /// Create JWT and sign with private key.
         /// </summary>
         /// <returns>The JWT string</returns>
-        private static string createJWT(string strFilename, string authOptions_CertificateSecret, string headerSerialized, string claimsetSerialized) // object claimset, string strClaim)
+        private static string createJWT(string strCertificateFilename, string strCertificatePass, string strSerializedHeader, string strSerializedClaim) 
         {
             // 1. Load the certificate
             const X509KeyStorageFlags certFlags = X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable;
-            X509Certificate2 certificate = new X509Certificate2(strFilename, authOptions_CertificateSecret, certFlags);
+            X509Certificate2 certificate = new X509Certificate2(strCertificateFilename, strCertificatePass, certFlags);
 
             // 2. Convert Json header to b64
-            byte [] headerBytes = Encoding.ASCII.GetBytes(headerSerialized);
+            byte [] headerBytes = Encoding.ASCII.GetBytes(strSerializedHeader);
             string strEncodedHeader = System.Convert.ToBase64String(headerBytes);
 
             // 3. Convert Json claimset to b64
-            byte[] claimsetBytes = Encoding.ASCII.GetBytes(claimsetSerialized);
+            byte[] claimsetBytes = Encoding.ASCII.GetBytes(strSerializedClaim);
             string strEncodedClaims = System.Convert.ToBase64String(claimsetBytes); 
 
             // 4. Get input that should be signed
