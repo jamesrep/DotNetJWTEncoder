@@ -122,6 +122,24 @@ namespace DotNetJWTEncoder
             return ((int)dt.Subtract(DT_EPOCH).TotalSeconds).ToString(CultureInfo.InvariantCulture);
         }
 
+        static void decode(string strJWT)
+        {
+            if(strJWT == null) { Console.WriteLine("[-] Error: no string provided");  }
+            string[] strAll = strJWT.Split(new char[] { '.' });
+
+            if (strAll.Length != 3) { Console.WriteLine("[-] Error: JWT must contain 2 punct."); }
+
+            byte [] btsHeader = Convert.FromBase64String(strAll[0]);
+            byte [] btsClaim = Convert.FromBase64String(strAll[1]);
+            //string strHeader = Convert.FromBase64String(strAll[0]);
+
+            string strHeader = System.Text.ASCIIEncoding.ASCII.GetString(btsHeader);
+            string strClaim = System.Text.ASCIIEncoding.ASCII.GetString(btsClaim);
+
+            Console.WriteLine(strHeader);
+            Console.WriteLine(strClaim);
+        }
+
         static void printArgs()
         {
             Console.WriteLine("Example: ");
@@ -136,6 +154,7 @@ namespace DotNetJWTEncoder
             Console.WriteLine("--certfile <certificate file>");
             Console.WriteLine("--certpass <certificate password>");
             Console.WriteLine("--epoch <datetime of epoch-request (optional)>");
+            Console.WriteLine("--decode <jwt string>");
         }
 
         /// <summary>
@@ -143,7 +162,7 @@ namespace DotNetJWTEncoder
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
-        {
+        {           
             string strClaimFile = null;
             string strKid = "A";
             string strX5t = "B";
@@ -189,6 +208,12 @@ namespace DotNetJWTEncoder
                     {
                         DateTime dtEpoch = Convert.ToDateTime( args[++i]);
                         Console.WriteLine(getEpoch(dtEpoch));
+                    }
+                    else if(args[i] == "--decode")
+                    {
+                        string strToDecode = args[++i];
+
+                        decode(strToDecode);
                     }
                 }
             }
