@@ -122,6 +122,22 @@ namespace DotNetJWTEncoder
             return ((int)dt.Subtract(DT_EPOCH).TotalSeconds).ToString(CultureInfo.InvariantCulture);
         }
 
+
+        static string fixB64Padding(string strEncoded)
+        {            
+            int bytesToPad = 4 - (strEncoded.Length % 4);
+
+            if (bytesToPad != 4)
+            {
+                for (int i = 0; i < bytesToPad; i++)
+                {
+                    strEncoded += "=";
+                }
+            }
+
+            return strEncoded;
+        }
+
         static void decode(string strJWT)
         {
             if(strJWT == null) { Console.WriteLine("[-] Error: no string provided");  }
@@ -129,14 +145,12 @@ namespace DotNetJWTEncoder
 
             if (strAll.Length != 3) { Console.WriteLine("[-] Error: JWT must contain 2 punct."); }
 
-            byte [] btsHeader = Convert.FromBase64String(strAll[0]);
-            byte [] btsClaim = Convert.FromBase64String(strAll[1]);
-            //string strHeader = Convert.FromBase64String(strAll[0]);
-
+            byte [] btsHeader = Convert.FromBase64String(fixB64Padding(strAll[0]));
             string strHeader = System.Text.ASCIIEncoding.ASCII.GetString(btsHeader);
-            string strClaim = System.Text.ASCIIEncoding.ASCII.GetString(btsClaim);
-
             Console.WriteLine(strHeader);
+
+            byte [] btsClaim = Convert.FromBase64String(fixB64Padding(strAll[1]));          
+            string strClaim = System.Text.ASCIIEncoding.ASCII.GetString(btsClaim);            
             Console.WriteLine(strClaim);
         }
 
